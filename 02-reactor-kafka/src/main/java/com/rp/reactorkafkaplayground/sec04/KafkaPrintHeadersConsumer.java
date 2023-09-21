@@ -1,4 +1,4 @@
-package com.rp.reactorkafkaplayground.sec01;
+package com.rp.reactorkafkaplayground.sec04;
 
 import com.rp.reactorkafkaplayground.util.KafkaUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -6,21 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 
 /*
-    goal: to demo a simple kafka consumer using reactor kafka
-    producer -----> kafka broker <-----> consumer
-
-    topic: order-events
-    partitions: 1
-    log-end-offset: 15 (15 events total)
-    current-offset: 0 (no ACK) -> events need to be acknowledged for the current offset to be modified
-    lag: 15
-
-    if there is lag, when the consumer requests data, you get the lagged events
-    (with no ACK, you get the same events again and again)
-
+    goal: to demo events with headers
  */
 @Slf4j
-public class Lec01KafkaConsumer {
+public class KafkaPrintHeadersConsumer {
 
     public static void main(String[] args) {
 
@@ -32,6 +21,7 @@ public class Lec01KafkaConsumer {
         receiver
                 .receive()
                 .doOnNext(r -> log.info("key: {}, value: {}", r.key(), r.value()))
+                .doOnNext(r -> r.headers().forEach(header -> log.info("header key: {}, value: {}", header.key(), new String(header.value()))))
                 .doOnNext(r -> r.receiverOffset().acknowledge()) // has commit interval, acknowledges periodically
                 .subscribe();
 

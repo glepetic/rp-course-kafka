@@ -45,6 +45,7 @@ public class Lec02KafkaConsumerMultipleTopics {
 
         KafkaReceiver.create(options)
                 .receive()
+                .take(1000) // receiver "close" since receiver stops once condition is met
                 .doOnNext(r -> log.info("topic: {}, key: {}, value: {}", r.topic(), r.key(), r.value()))
                 .doOnNext(r -> r.receiverOffset().acknowledge()) // has commit interval, acknowledges periodically
                 .subscribe();
